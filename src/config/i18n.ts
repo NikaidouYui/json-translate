@@ -1,4 +1,4 @@
-export const defaultLocale = 'en'
+export const defaultLocale = 'zh'
 
 export const locales = ['en', 'zh', 'zh-TW', 'ja', 'ko', 'fr', 'de', 'es', 'pt', 'it', 'ru', 'ar', 'el', 'nl', 'id', 'pl', 'th', 'tr', 'vi']
 

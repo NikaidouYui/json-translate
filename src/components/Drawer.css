@@ -1,0 +1,46 @@
+.drawer-container {
+    position: relative;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .toggle-button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .drawer {
+    position: fixed;
+    top: 0;
+    right: -300px; /* 初始位置在视口外 */
+    width: 300px;
+    background-color: #f4f4f4;
+    border-left: 2px solid #ddd;
+    padding: 20px;
+    transition: right 0.3s ease-in-out;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .drawer.open {
+    right: 0; /* 打开时将抽屉移入视口 */
+  }
+  
+  .drawer-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  textarea {
+    resize: none;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  

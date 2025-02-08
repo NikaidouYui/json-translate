@@ -14,6 +14,8 @@ import { ChevronDown, Languages, Loader2 } from "lucide-react"
 import { getDictionary } from "@/lib/getDictionary"
 import { validateApiKey } from "@/lib/openai"
 
+
+
 interface TranslatedResult {
   lang: string;
   content: string;
@@ -81,6 +83,12 @@ export function TranslatePanel({ dict }: TranslatePanelProps) {
     file, 
     apiKey,
     setApiKey,
+    baseUri,
+    setbaseUri,
+    modelName,
+    setmodelName,
+    apiType,
+    customPrompt,
     isTranslating,
     setIsTranslating,
     setTranslatedContent,
@@ -224,6 +232,36 @@ export function TranslatePanel({ dict }: TranslatePanelProps) {
     if (seconds < 60) return `${Math.ceil(seconds)} seconds`
     return `${Math.ceil(seconds / 60)} minutes`
   }
+  const extractJsonBlocks = (text:string) => {
+
+    // 匹配 ```json 和 ``` 之间的内容
+    const regex = /```json\s*([\s\S]*?)\s*```/g;
+    const matches = [];
+    let match;
+  
+    while ((match = regex.exec(text)) !== null) {
+      matches.push(match[1].trim()); // 提取 JSON 内容并去除两端空格
+    }
+  
+    return matches;
+  };
+
+  const processJsonBlocks = (text:string) => {
+    const jsonBlocks = extractJsonBlocks(text);
+    
+    // 解析 JSON 内容并处理
+    return jsonBlocks.map((jsonText) => {
+      try {
+        const parsedJson = JSON.parse(jsonText);
+        // 处理 JSON 对象
+        return parsedJson;
+      } catch (e) {
+        console.error('Invalid JSON:', jsonText);
+        return null;
+      }
+    });
+  };
+  
 
   const handleTranslationError = (err: any) => {
     setError(err.message || "Translation failed");
@@ -246,7 +284,7 @@ export function TranslatePanel({ dict }: TranslatePanelProps) {
 
     // 添加API密钥验证
     try {
-      await validateApiKey(apiKey);
+      await validateApiKey(apiKey,baseUri,modelName,apiType);
     } catch (err) {
       let errorMessage = translations.apiKeyErrors.validationFailed;
       
@@ -362,19 +400,23 @@ export function TranslatePanel({ dict }: TranslatePanelProps) {
             const translatedChunk = await translate(
               JSON.stringify(chunk),
               lang,
-              apiKey,
+              apiKey,baseUri,modelName,
+              apiType,
               controller.signal,
+              customPrompt,
               (progress) => {
                 const singleChunkProgress = progress / 100
                 const overallProgress = ((currentCompletedChunks + singleChunkProgress) / calculatedTotalChunks) * 100
                 setTotalProgress(Math.round(overallProgress))
               },
               (content) => {
+                
                 setStreamContent(content)
                 try {
                   // 如果翻译被取消，不进行 JSON 解析
                   if (cancelTranslation) return
-                  
+                  // alert(content);
+          
                   const parsedStreamContent = JSON.parse(`{${content}}`)
                   const mergedContent = mergeTranslatedChunks([
                     currentLangContent,
@@ -394,10 +436,11 @@ export function TranslatePanel({ dict }: TranslatePanelProps) {
                     })
                   }
                   setTranslatedResults([...results])
+                  
+                  // alert(content);
                 } catch (error) {
                   // 如果是取消操作，忽略错误
                   if (cancelTranslation) return
-                  
                   console.warn('Stream content parse error:', error)
                 }
               }

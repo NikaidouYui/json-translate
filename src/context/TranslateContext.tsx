@@ -13,7 +13,15 @@ interface TranslateContextType {
   sourceLang: string
   setSourceLang: (lang: string) => void
   apiKey: string
+  baseUri: string
+  modelName:string
+  apiType:string
+  customPrompt:string
+  setCustomPrompt: (key: string) => void
   setApiKey: (key: string) => void
+  setbaseUri: (key: string) => void
+  setmodelName: (key: string) => void  
+  setapiType: (key: string) => void
   isTranslating: boolean
   setIsTranslating: (status: boolean) => void
   translatedContent: string
@@ -41,15 +49,19 @@ const TranslateContext = createContext<TranslateContextType | undefined>(undefin
 
 export function TranslateProvider({ children }: { children: React.ReactNode }) {
   const [file, setFile] = useState<File | null>(null)
-  const [sourceLang, setSourceLang] = useState('en')
+  const [sourceLang, setSourceLang] = useState('zh')
   const [apiKey, setApiKey] = useState('')
+  const [baseUri, setbaseUri] = useState('')
+  const [modelName, setmodelName] = useState('')
+  const [apiType, setapiType] = useState('openAi')
+  const [customPrompt, setCustomPrompt] = useState('')
   const [isTranslating, setIsTranslating] = useState(false)
   const [translatedContent, setTranslatedContent] = useState('')
   const [progress, setProgress] = useState(0)
   const [cancelTranslation, setCancelTranslation] = useState(false)
   const [streamContent, setStreamContent] = useState('')
   const [translatedResults, setTranslatedResults] = useState<TranslatedResult[]>([])
-  const [selectedLangs, setSelectedLangs] = useState<string[]>(['en', 'de', 'ja', 'ru', 'tr', 'pt', 'es', 'fr', 'zh'])
+  const [selectedLangs, setSelectedLangs] = useState<string[]>(['zh'])
   const [currentTranslatingLang, setCurrentTranslatingLang] = useState<string | null>(null)
   const [totalProgress, setTotalProgress] = useState(0)
   const [estimatedTime, setEstimatedTime] = useState(0)
@@ -69,8 +81,16 @@ export function TranslateProvider({ children }: { children: React.ReactNode }) {
     setFile,
     sourceLang,
     setSourceLang,
-    apiKey,
-    setApiKey,
+    apiKey, 
+    setApiKey,    
+    baseUri,
+    setbaseUri,
+    modelName,
+    setmodelName,
+    apiType,
+    setapiType,
+    customPrompt,
+    setCustomPrompt,
     isTranslating,
     setIsTranslating,
     translatedContent,
