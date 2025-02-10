@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
-  images: {
-    unoptimized: true,
-  },
-  basePath: '/json-translate',
+  output: 'standalone', // 添加这一行
+  reactStrictMode: true,
 }
 
 module.exports = nextConfig
