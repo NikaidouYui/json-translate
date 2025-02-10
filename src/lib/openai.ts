@@ -2,7 +2,7 @@ import OpenAI from 'openai'
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 
-const c_prompt=`1. Keep all keys unchanged.
+const c_prompt = `1. Keep all keys unchanged.
     2. Only translate value parts.
     3. Keep JSON format valid.
     4. Preserve all special characters and formats.    
@@ -20,10 +20,11 @@ export async function translate(
   onProgress?: (progress: number) => void,
   onStream?: (chunk: string) => void
 ) {
-  alert({customPrompt});
+  console.log(`${customPrompt}`);
+  // return;
   switch (apiType) {
     case "openAi":
-     return await translateByOpenAi(text, targetLang, apiKey, baseUrl, modelName, signal, customPrompt, onProgress, onStream);
+      return await translateByOpenAi(text, targetLang, apiKey, baseUrl, modelName, signal, customPrompt, onProgress, onStream);
       break;
     case "gemini":
       return await translateByGemini(text, targetLang, apiKey, modelName, signal, customPrompt, onProgress, onStream);
@@ -64,9 +65,11 @@ export async function translateByGemini(
   }
 
   const gemini = new GoogleGenerativeAI(apiKey);
-  const model = gemini.getGenerativeModel({ model: modelName ,generationConfig: {
-    responseMimeType: "application/json",
-  }});
+  const model = gemini.getGenerativeModel({
+    model: modelName, generationConfig: {
+      responseMimeType: "application/json",
+    }
+  });
 
   try {
     const prompt = `Please translate the following JSON content to ${targetLang}, keeping the JSON structure unchanged. Only translate the value part.
@@ -167,7 +170,6 @@ export async function translateByOpenAi(
     JSON content:
     ${text}`
 
-    alert(prompt);
     const response = await openai.chat.completions.create({
       model: modelName,
       messages: [
@@ -244,7 +246,7 @@ export async function validateApiKeyByOpenAi(apiKey: string,
   console.log("验证成功");
   const openai = new OpenAI({
     baseURL: baseUrl,
-    apiKey:apiKey,
+    apiKey: apiKey,
     dangerouslyAllowBrowser: true
   })
 

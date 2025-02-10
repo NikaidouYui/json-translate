@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', // 添加这一行
   reactStrictMode: true,
-  experimental: {
-    scrollRestoration: true
-  }
 }
 
 module.exports = nextConfig
